@@ -1,0 +1,66 @@
+#ifndef GOOGLESESSION_H
+#define GOOGLESESSION_H
+
+#include <QObject>
+#include <QString>
+#include <QHash>
+
+#include <QDomElement>
+#include <QContact>
+
+class QHttp;
+
+class GoogleSession: public QObject
+{
+  Q_OBJECT
+  public:
+    enum State
+    {
+      Invalid,
+      Authenticating,
+      Authenticated,
+      FetchingGroups,
+      FetchingContacts
+    };
+    
+    enum Error
+    {
+      AuthenticationFailed,
+      InvalidState
+    };
+    
+    GoogleSession(QObject *parent = NULL);
+    virtual ~GoogleSession();
+    
+    State state() const;
+    
+  public slots:
+    void login(const QString &login, const QString &passwd);   
+    void fetchGroups();
+    void fetchContacts();
+    void setGroups(QHash<QString, QString> groups);
+    
+  signals:
+    void error(GoogleSession::Error error, QString reason);
+    void authenticated();
+    void groupsFetched(QHash<QString, QString> groups);
+    void contactsFetched(QList<QContact> contacts);
+    
+  private slots:
+    void httpResult(int id, bool error);
+  private:
+    void parseGroups(const QString &xml, QHash<QString, QString> &groupMap);
+    void parseContacts(const QString &xml, QList<QContact> &contacts);
+    
+    void setState(State newState);
+    
+    QHttp *http;    
+    int authReqId;    
+    int groupsFetchId;
+    int contactsFetchId;
+    QString authKey;    
+    State m_state;
+    QHash<QString, QString> groups;
+};
+
+#endif // GOOGLESESSION_H
