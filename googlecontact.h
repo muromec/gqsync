@@ -12,8 +12,9 @@ class GoogleContact : public QContact
     GoogleContact (QContact &contact);
     ~GoogleContact();
     
-    QString googleGroup() const;
-    void setGoogleGroup(const QString &group);
+    QStringList googleGroups() const;
+    void setGoogleGroup(const QStringList &groups);
+    void addGoogleGroup(const QString &group);
     
     QString googleId() const;
     void setGoogleId(const QString &id);
@@ -40,6 +41,8 @@ class GoogleContact : public QContact
     static QHash<QString, GoogleField> fields;
     static QHash<QString, PhoneType> phoneTypes;
     static QHash<QString, Location> postalAddressTypes;
+
+    QStringList googleGroupList;;
 };
 
 #endif // GOOGLECONTACT_H
