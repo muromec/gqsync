@@ -65,7 +65,17 @@ void GoogleSession::login(const QString &login, const QString &passwd)
 void GoogleSession::httpResult(int id, bool errorFlag)
 {
   if (id==authReqId) // Authentication result
-  {
+    authResult(errorFlag);
+  else if (id==groupsFetchId) // Groups fetch result
+    groupsResult(errorFlag);  
+  else if (id==contactsFetchId) // Groups fetch result
+    contactsResult(errorFlag); 
+  else
+    qWarning() << "GoogleSession: Invalid response id" << id << "error:" << errorFlag;
+}
+
+void GoogleSession::authResult(bool errorFlag)
+{
     if (errorFlag)
     {
       qDebug() << "Auth http error" << http->errorString();
@@ -109,9 +119,9 @@ void GoogleSession::httpResult(int id, bool errorFlag)
         emit error(AuthenticationFailed, keyMap["Error"]);
       }
     }
-  }
-  else if (id==groupsFetchId) // Groups fetch result
-  {
+}
+void GoogleSession::groupsResult(bool errorFlag)
+{
     QByteArray respData = http->readAll();
 
     qDebug() << "Groups Response header:" << http->lastResponse().statusCode() << http->lastResponse().reasonPhrase();
@@ -130,17 +140,15 @@ void GoogleSession::httpResult(int id, bool errorFlag)
     setState(Authenticated);
     emit groupsFetched(groupMap);
   }
-  else if (id==contactsFetchId) // Groups fetch result
-  {
+
+void GoogleSession::contactsResult(bool errorFlag)
+{
     QString resp = QString::fromUtf8(http->readAll().constData()); 
     qDebug() << "Contacts Response header:" << http->lastResponse().statusCode() << http->lastResponse().reasonPhrase();
     QList<QContact> contacts;
     parseContacts(resp, contacts);
     setState(Authenticated);
-  }
-  else
-    qWarning() << "GoogleSession: Invalid response id" << id << "error:" << errorFlag;
-}
+}   
 
 void GoogleSession::fetchGroups()
 {

@@ -51,6 +51,9 @@ class GoogleSession: public QObject
   private:
     void parseGroups(const QString &xml, QHash<QString, QString> &groupMap);
     void parseContacts(const QString &xml, QList<QContact> &contacts);
+    void authResult(bool errorFlag);
+    void groupsResult(bool errorFlag);
+    void contactsResult(bool errorFlag);
     
     void setState(State newState);
     
