@@ -6,6 +6,9 @@
 #include <QHttpResponseHeader>
 #include <QHttpRequestHeader>
 
+#include <QContactModel>
+#include <QCategoryManager>
+
 #include <QDebug>
 
 #include "googlesession.h"
@@ -135,8 +138,10 @@ void GoogleSession::groupsResult(bool errorFlag)
     }
     else
       resp = QString::fromUtf8(respData.constData()); 
+
     QHash<QString, QString> groupMap;
     parseGroups(resp, groupMap);
+
     setState(Authenticated);
     emit groupsFetched(groupMap);
   }
@@ -148,6 +153,7 @@ void GoogleSession::contactsResult(bool errorFlag)
     QList<QContact> contacts;
     parseContacts(resp, contacts);
     setState(Authenticated);
+    emit contactsFetched(contacts);
 }   
 
 void GoogleSession::fetchGroups()
@@ -194,3 +200,142 @@ void GoogleSession::fetchContacts()
   setState(FetchingContacts);
   qDebug() << "Fetching conacts...";
 }
+
+int GoogleSession::updateContacts(QList<QContact> &contacts) {
+
+  QContactModel filter;
+
+  for (int i = 0; i < contacts.size(); ++i) {
+    QContact gContact = contacts.at(i);
+    filter.setFilter(gContact.label());
+
+    // single match. mering
+    if (filter.count() == 1) {
+      filter.updateContact( merge(filter.contact(0), gContact) );
+    } 
+    // no match. saving directly
+    else if (filter.count() == 0) {
+      filter.addContact(gContact);
+    }
+  }
+
+}
+
+QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
+{
+
+  qDebug() << "==";
+  qDebug() << contact.label() << gContact.label();
+
+  // merge email lists
+  QStringList gl = gContact.emailList(); 
+  QStringList el =  contact.emailList();
+
+  for (int i=0; i<gl.size(); ++i) {
+    if ( el.contains( gl.at(i) ) )
+      qDebug() << "already have email" <<  gl.at(i) ;
+    else
+      contact.insertEmail(  gl.at(i)  );
+  }
+
+  // merge phone number lists
+  QMap<QContact::PhoneType, QString> nums  = contact.phoneNumbers(); 
+  QMap<QContact::PhoneType, QString> gNums = gContact.phoneNumbers(); 
+
+
+  // iterate google data
+  QMapIterator<QContact::PhoneType, QString> gNumIt(gNums);
+
+  while (gNumIt.hasNext()) {
+    gNumIt.next();
+    QString phone             = gNumIt.value();
+    QContact::PhoneType type  = gNumIt.key();
+
+    if (! nums.values().contains( phone  ) ) {
+      gContact.setPhoneNumber(type,  phone);
+      qDebug () << "adding phone" << phone << "of type" << type;
+    } else {
+
+       // iterate qtopia data
+       QMapIterator<QContact::PhoneType, QString> it(nums);
+       while (it.hasNext()) {
+              it.next();
+              qDebug() << "contacts hase phone" << it.value() << "of type" << it.key();
+              qDebug() << "comparing to google" << phone << "of type" << type;
+              if (it.value() ==  phone && it.key() != type ) {
+                nums.remove(it.key() );
+                nums.remove(type); // FIXME
+                nums.insert(type,  phone);
+                contact.setPhoneNumbers(nums);
+                qDebug() << "replaced phone of type" <<  type << phone;
+                break;
+              }
+       }
+      qDebug () << "skipping phone" << phone << type ;
+
+    }
+  }
+
+  // TODO: merge groups
+
+  QStringList googleGroupList = gContact.googleGroups();
+
+  for (int i=0; i<googleGroupList.size(); ++i) {
+
+    QString googleGroupId   = googleGroupList.at(i);
+    QString googleGroupName = groups[googleGroupId];
+    QString googleGroupQId   = "category." + googleGroupName;
+
+
+    qDebug() << "Group id" <<googleGroupId << "name" << googleGroupName ;
+
+    if (googleGroupName.isEmpty())
+      continue;
+
+
+
+    QList<QString> qGroupList = contact.categories();
+    if (! qGroupList.contains(googleGroupQId) )  {
+      qGroupList << googleGroupQId;
+
+      qDebug() << "Adding group" << googleGroupName ;
+
+      contact.setCategories(qGroupList);
+
+    } else {
+      qDebug() << "Skipping group" << googleGroupName;
+    }
+
+    qDebug() << "group count" << qGroupList.count();
+
+  }
+
+  qDebug() << "\n";
+  return contact;
+
+
+
+}
+
+int GoogleSession::updateGroups()
+{
+  QCategoryManager cats("Address Book");
+
+  QHashIterator<QString, QString> it(groups);
+
+  while (it.hasNext()) {
+    it.next();
+
+    QString googleGroupId   = it.key();
+    QString googleGroupName = it.value();
+    QString googleGroupQId   = "category." + googleGroupName;
+
+    if (!cats.exists( googleGroupQId  ) ) {
+      cats.ensureSystemCategory(googleGroupQId, googleGroupName);
+    } 
+  
+  }
+
+
+}
+    

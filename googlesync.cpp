@@ -46,13 +46,15 @@ void GoogleSync::googleGroups(QHash<QString, QString> groups)
     qDebug() << it.key() << "->" << it.value();
   }
   session->setGroups(groups);
+  session->updateGroups();
   
   session->fetchContacts();
 }
 
 void GoogleSync::googleContacts(QList<QContact> contacts)
 {
-  qDebug() << "Got contacts";
+  qDebug() << "Got contacts. Updating";
+  session->updateContacts(contacts);
   qDebug() << "Terminating";
   QApplication::instance()->exit(0);
 }

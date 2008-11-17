@@ -7,6 +7,7 @@
 
 #include <QDomElement>
 #include <QContact>
+#include "googlecontact.h"
 
 class QHttp;
 
@@ -33,12 +34,15 @@ class GoogleSession: public QObject
     virtual ~GoogleSession();
     
     State state() const;
+    int updateContacts(QList<QContact>&);
+    int updateGroups();
     
   public slots:
     void login(const QString &login, const QString &passwd);   
     void fetchGroups();
     void fetchContacts();
     void setGroups(QHash<QString, QString> groups);
+    QContact merge(QContact contact, GoogleContact gContact);
     
   signals:
     void error(GoogleSession::Error error, QString reason);
@@ -64,6 +68,7 @@ class GoogleSession: public QObject
     QString authKey;    
     State m_state;
     QHash<QString, QString> groups;
+
 };
 
 #endif // GOOGLESESSION_H
