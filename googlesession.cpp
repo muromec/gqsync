@@ -59,7 +59,7 @@ void GoogleSession::login(const QString &login, const QString &passwd)
   QString queryString = QString("Email=%1&Passwd=%2&accountType=GOOGLE&service=cp").arg(login).arg(passwd);
   
   authReqId = http->request(header, queryString.toUtf8());
-  m_state = Authenticating;    
+  setState(Authenticating);    
 }
 
 void GoogleSession::httpResult(int id, bool errorFlag)
