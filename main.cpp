@@ -1,16 +1,4 @@
-#include <QApplication>
-
-#include "googlesession.h"
-#include "googlesync.h"
-
-
-int main(int argc, char **argv) {
-
-
-  QApplication app(argc, argv);
-
-  GoogleSync sync;
-  sync.start(argv[1], argv[2]);
-
-  return app.exec();
-}
+#include <loginwindow.h>
+#include <QtopiaApplication>
+QTOPIA_ADD_APPLICATION(QTOPIA_TARGET,LoginWindow)
+QTOPIA_MAIN

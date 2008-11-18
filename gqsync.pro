@@ -12,11 +12,22 @@ INCLUDEPATH += .
 include (zlib/zlib.pri)
 
 # Input
-HEADERS += googlesession.h googlesync.h googlecontact.h
-SOURCES += main.cpp googlesession.cpp googlesession_parser.cpp googlesync.cpp googlecontact.cpp
+HEADERS += \
+  googlesession.h \
+  googlesync.h \
+  googlecontact.h \
+  loginwindow.h
+
+SOURCES += \
+  main.cpp \
+  googlesession.cpp \
+  googlesession_parser.cpp \
+  googlesync.cpp \
+  googlecontact.cpp \
+  loginwindow.cpp
 
 TRANSLATIONS = gqsync.ru.ts
 
-QT += xml network
+QT += xml network gui
 
 depends(libraries/qtopiapim) 
