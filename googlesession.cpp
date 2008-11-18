@@ -15,7 +15,15 @@
 
 //#define USER_AGENT "GQSync/1.0 (gzip)"
 #define USER_AGENT "GQSync/1.0"
-static QString stateNames[] = {"Invalid","Authenticating","Authenticated","FetchingGroups","FetchingContacts"};
+static QString stateNames[] = {
+  "Invalid",
+  "Authenticating",
+  "Authenticated",
+  "Fetching groups",
+  "Fetching contacts",
+  "Updating groups",
+  "Updating contacts",
+};
 
 GoogleSession::GoogleSession(QObject *parent)
 : QObject(parent), http(NULL), m_state(Invalid), 
@@ -207,6 +215,7 @@ void GoogleSession::fetchContacts()
 
 int GoogleSession::updateContacts(QList<QContact> &contacts) {
 
+  setState(UpdatingContacts);
   QContactModel filter;
 
   for (int i = 0; i < contacts.size(); ++i) {
@@ -223,6 +232,7 @@ int GoogleSession::updateContacts(QList<QContact> &contacts) {
     }
   }
 
+  setState(Authenticated);
 }
 
 QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
@@ -324,12 +334,11 @@ QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
   qDebug() << "\n";
   return contact;
 
-
-
 }
 
 int GoogleSession::updateGroups()
 {
+  setState(UpdatingGroups);
   QCategoryManager cats("Address Book");
 
   QHashIterator<QString, QString> it(groups);
@@ -347,6 +356,7 @@ int GoogleSession::updateGroups()
   
   }
 
+  setState(Authenticated);
 
 }
     

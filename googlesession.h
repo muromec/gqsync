@@ -21,7 +21,9 @@ class GoogleSession: public QObject
       Authenticating,
       Authenticated,
       FetchingGroups,
-      FetchingContacts
+      FetchingContacts,
+      UpdatingGroups,
+      UpdatingContacts,
     };
     
     enum Error
