@@ -23,12 +23,14 @@ void GoogleContact::fillHashes()
   fields["organisation"] = Organisation;
   fields["groupMembershipInfo"] = GroupMembershipInfo;
   
+  // OtherPhone, Mobile, Fax, Pager, HomePager and VOIP are restricted
+  // see libraries/qtopiapim 
   phoneTypes["http://schemas.google.com/g/2005#fax"] = QContact::Fax;  
   phoneTypes["http://schemas.google.com/g/2005#home"] = QContact::HomePhone;  
   phoneTypes["http://schemas.google.com/g/2005#home_fax"] = QContact::HomeFax;   
-  phoneTypes["http://schemas.google.com/g/2005#mobile"] = QContact::Mobile;   
-  phoneTypes["http://schemas.google.com/g/2005#other"] = QContact::OtherPhone;  
-  phoneTypes["http://schemas.google.com/g/2005#pager"] = QContact::Pager;  
+  phoneTypes["http://schemas.google.com/g/2005#mobile"] = QContact::HomeMobile;   
+  phoneTypes["http://schemas.google.com/g/2005#other"] = QContact::HomeVOIP;  
+  phoneTypes["http://schemas.google.com/g/2005#pager"] = QContact::BusinessPager;  
   phoneTypes["http://schemas.google.com/g/2005#work"] = QContact::BusinessPhone;   
   phoneTypes["http://schemas.google.com/g/2005#work_fax"] = QContact::BusinessFax;
   
