@@ -15,6 +15,7 @@
 
 //#define USER_AGENT "GQSync/1.0 (gzip)"
 #define USER_AGENT "GQSync/1.0"
+static QString stateNames[] = {"Invalid","Authenticating","Authenticated","FetchingGroups","FetchingContacts"};
 
 GoogleSession::GoogleSession(QObject *parent)
 : QObject(parent), http(NULL), m_state(Invalid), 
@@ -28,11 +29,14 @@ GoogleSession::~GoogleSession()
 
 void GoogleSession::setState(State newState)
 {
-  static QString states[] = {"Invalid","Authenticating","Authenticated","FetchingGroups","FetchingContacts"};
-  qDebug() << "GoogleSession: state" << states[m_state] << "->" << states[newState];
+  qDebug() << "GoogleSession: state" << stateNames[m_state] << "->" << stateNames[newState];
   m_state = newState;
+  emit stateChanged(m_state);
 }
 
+QString GoogleSession::stateName(State s) {
+  return stateNames[s];
+}
 GoogleSession::State GoogleSession::state() const
 {
   return m_state;

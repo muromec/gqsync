@@ -36,6 +36,7 @@ class GoogleSession: public QObject
     State state() const;
     int updateContacts(QList<QContact>&);
     int updateGroups();
+    static QString stateName(State s);
     
   public slots:
     void login(const QString &login, const QString &passwd);   
@@ -49,6 +50,7 @@ class GoogleSession: public QObject
     void authenticated();
     void groupsFetched(QHash<QString, QString> groups);
     void contactsFetched(QList<QContact> contacts);
+    void stateChanged(GoogleSession::State);
     
   private slots:
     void httpResult(int id, bool error);
