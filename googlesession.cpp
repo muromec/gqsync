@@ -78,7 +78,7 @@ void GoogleSession::httpResult(int id, bool errorFlag)
   else if (id==contactsFetchId) // Groups fetch result
     contactsResult(errorFlag); 
   else
-    qWarning() << "GoogleSession: Invalid response id" << id << "error:" << errorFlag;
+    qDebug() << "GoogleSession: Invalid response id" << id << "error:" << errorFlag;
 }
 
 void GoogleSession::authResult(bool errorFlag)
