@@ -11,6 +11,7 @@ GoogleSync::GoogleSync(QObject *parent)
   connect(session, SIGNAL(authenticated()), SLOT(googleAuth()));
   connect(session, SIGNAL(groupsFetched(QHash<QString, QString>)), SLOT(googleGroups(QHash<QString, QString>)));
   connect(session, SIGNAL(contactsFetched(QList<QContact>)), SLOT(googleContacts(QList<QContact>)));
+  connect(session, SIGNAL(stateChanged(GoogleSession::State )), SIGNAL(stateChanged(GoogleSession::State)) );
 }
 
 GoogleSync::~GoogleSync()

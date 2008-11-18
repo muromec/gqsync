@@ -25,6 +25,9 @@ class GoogleSync: public QObject
     GoogleSession *session;
     bool inProgress;
     QHash<QString, QString> groupMap;
+
+  signals:
+    void stateChanged(GoogleSession::State state);
 };
 
 #endif
