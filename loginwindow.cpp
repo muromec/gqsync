@@ -55,6 +55,7 @@ LoginWindow::LoginWindow(QWidget *parent, Qt::WindowFlags wf)
 
   setCentralWidget(central);
 
+  sync = new GoogleSync();
 
 }
 
@@ -66,10 +67,9 @@ void LoginWindow::start() {
   if (save->checkState() == Qt::Checked )
     cfg->setValue("login/password", passw->text() );
 
-  GoogleSync sync;
-  connect(&sync, SIGNAL(stateChanged(GoogleSession::State) ),
+  connect(sync, SIGNAL(stateChanged(GoogleSession::State) ),
       this, SLOT(stateChanged(GoogleSession::State) ) );
-  sync.start( login->text() , passw->text() );
+  sync->start( login->text() , passw->text() );
 }
 
 

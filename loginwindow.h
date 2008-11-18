@@ -10,6 +10,7 @@
 #include <QCheckBox>
 
 #include "googlesession.h"
+#include "googlesync.h"
 
 class LoginWindow : public QMainWindow
 {
@@ -32,6 +33,7 @@ private:
         QCheckBox* save;
 
         QSettings* cfg;
+        GoogleSync* sync;
 private slots:
         void start();
         void stateChanged(GoogleSession::State state);
