@@ -263,11 +263,18 @@ QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
               qDebug() << "contacts hase phone" << it.value() << "of type" << it.key();
               qDebug() << "comparing to google" << phone << "of type" << type;
               if (it.value() ==  phone && it.key() != type ) {
+
+                bool updatedef = (contact.defaultPhoneNumber() == phone);
+
                 nums.remove(it.key() );
                 nums.remove(type); // FIXME
                 nums.insert(type,  phone);
                 contact.setPhoneNumbers(nums);
-                qDebug() << "replaced phone of type" <<  type << phone;
+
+                if (updatedef)
+                  contact.setDefaultPhoneNumber(type);
+
+                qDebug() << "replaced phone of type" <<  type << phone << updatedef;
                 break;
               }
        }
