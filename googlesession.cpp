@@ -274,7 +274,7 @@ QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
        QMapIterator<QContact::PhoneType, QString> it(nums);
        while (it.hasNext()) {
               it.next();
-              qDebug() << "contacts hase phone" << it.value() << "of type" << it.key();
+              qDebug() << "contacts has phone" << it.value() << "of type" << it.key();
               qDebug() << "comparing to google" << phone << "of type" << type;
               if (it.value() ==  phone && it.key() != type ) {
 
