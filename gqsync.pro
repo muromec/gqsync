@@ -37,6 +37,11 @@ desktop.path=/apps/Applications
 desktop.hint=desktop
 INSTALLS+=desktop
 
+pics.files=pics/*
+pics.path=/pics/gqsync
+pics.hint=pics
+INSTALLS+=pics
+
 pkg.desc=Google synchronization tool
 pkg.version=r22
 pkg.maintainer=Ilya Petrov <ilya.muromec@gmail.com>
