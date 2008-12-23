@@ -176,7 +176,7 @@ void GoogleSession::fetchGroups()
     return;
   }
   
-  QHttpRequestHeader header("GET", "/m8/feeds/groups/default/full");
+  QHttpRequestHeader header("GET", "/m8/feeds/groups/default/full?max-results=10000");
   header.setValue("Authorization",   "GoogleLogin auth="+authKey);
   header.setValue("Host",            "www.google.com");
   header.setValue("Accept-Encoding", "gzip");
@@ -201,7 +201,7 @@ void GoogleSession::fetchContacts()
     return;
   }
   
-  QHttpRequestHeader header("GET", "/m8/feeds/contacts/default/full");
+  QHttpRequestHeader header("GET", "/m8/feeds/contacts/default/full?max-results=10000");
   header.setValue("Authorization",   "GoogleLogin auth="+authKey);
   header.setValue("Host",            "www.google.com");
   header.setValue("Accept-Encoding", "gzip");
