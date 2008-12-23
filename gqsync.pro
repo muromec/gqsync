@@ -8,6 +8,7 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
+CONFIG+=qtopia_main no_quicklaunch no_singleexec
 
 include (zlib/zlib.pri)
 
@@ -26,8 +27,19 @@ SOURCES += \
   googlecontact.cpp \
   loginwindow.cpp
 
-TRANSLATIONS = gqsync.ru.ts
 
 QT += xml network gui
 
 depends(libraries/qtopiapim) 
+
+desktop.files=gqsync.desktop
+desktop.path=/apps/Applications
+desktop.hint=desktop
+INSTALLS+=desktop
+
+pkg.desc=Google synchronization tool
+pkg.version=r22
+pkg.maintainer=Ilya Petrov <ilya.muromec@gmail.com>
+pkg.license=GPL
+pkg.domain=trusted
+
