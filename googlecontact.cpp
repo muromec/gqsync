@@ -108,7 +108,9 @@ void GoogleContact::parse(const QDomNode &node)
           qDebug() << "Organisation:" << field.text();
           break;
         case GroupMembershipInfo:
-          addGoogleGroup(field.attribute("href"));
+          QList<QString> mCategories = categories();
+          mCategories  << field.attribute("href");
+          setCategories(mCategories);
           qDebug() << "Group:" << field.attribute("href");
           break;
       }
@@ -120,19 +122,7 @@ GoogleContact::~GoogleContact()
 {
 };
 
-QStringList GoogleContact::googleGroups() const
-{
-  return googleGroupList;
-}
 
-void GoogleContact::setGoogleGroup(const QStringList &group)
-{
-  googleGroupList =  group;
-}
-
-void GoogleContact::addGoogleGroup(const QString &group){
-  googleGroupList << group;
-}
 
 QString GoogleContact::googleId() const
 {

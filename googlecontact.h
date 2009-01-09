@@ -12,10 +12,6 @@ class GoogleContact : public QContact
     GoogleContact (QContact &contact);
     ~GoogleContact();
     
-    QStringList googleGroups() const;
-    void setGoogleGroup(const QStringList &groups);
-    void addGoogleGroup(const QString &group);
-    
     QString googleId() const;
     void setGoogleId(const QString &id);
   private:

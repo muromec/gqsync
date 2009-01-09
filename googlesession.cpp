@@ -297,9 +297,8 @@ QContact GoogleSession::merge(QContact contact, GoogleContact gContact)
     }
   }
 
-  // TODO: merge groups
+  QStringList googleGroupList = gContact.categories();
 
-  QStringList googleGroupList = gContact.googleGroups();
 
   for (int i=0; i<googleGroupList.size(); ++i) {
 
