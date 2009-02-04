@@ -31,6 +31,7 @@ private:
         QPushButton* exitButton;
 
         QCheckBox* save;
+        QCheckBox* skip;
 
         QSettings* cfg;
         GoogleSync* sync;

@@ -213,13 +213,18 @@ void GoogleSession::fetchContacts()
   qDebug() << "Fetching conacts...";
 }
 
-int GoogleSession::updateContacts(QList<QContact> &contacts) {
+int GoogleSession::updateContacts(QList<QContact> &contacts, bool skip) {
 
   setState(UpdatingContacts);
   QContactModel filter;
 
   for (int i = 0; i < contacts.size(); ++i) {
     QContact gContact = contacts.at(i);
+
+    // skip contacts with no phonenumbers
+    if (skip && (! gContact.phoneNumbers().size() ))
+      continue;
+
     filter.setFilter(gContact.label());
 
     // single match. mering

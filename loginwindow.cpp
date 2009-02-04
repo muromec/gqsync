@@ -31,6 +31,9 @@ LoginWindow::LoginWindow(QWidget *parent, Qt::WindowFlags wf)
   save = new QCheckBox("Save password", this);
   save->setCheckState( (Qt::CheckState) cfg->value("login/save" ).toInt() );
 
+  skip = new QCheckBox("Skip without numbers", this);
+  skip->setCheckState( (Qt::CheckState) cfg->value("login/skip" ).toInt() );
+
   connect( startButton, SIGNAL( clicked() ),
       SLOT( start () ) );
 
@@ -46,6 +49,7 @@ LoginWindow::LoginWindow(QWidget *parent, Qt::WindowFlags wf)
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addLayout(grid);
   layout->addWidget(state);
+  layout->addWidget(skip);
   layout->addWidget(save);
   layout->addWidget(startButton);
   layout->addWidget(exitButton);
@@ -63,13 +67,19 @@ LoginWindow::LoginWindow(QWidget *parent, Qt::WindowFlags wf)
 void LoginWindow::start() {
   // Qt::Checked  
   cfg->setValue("login/save", (int) save->checkState() );
+  cfg->setValue("login/skip", (int) skip->checkState() );
   cfg->setValue("login/email", login->text() );
   if (save->checkState() == Qt::Checked )
     cfg->setValue("login/password", passw->text() );
 
   connect(sync, SIGNAL(stateChanged(GoogleSession::State) ),
       this, SLOT(stateChanged(GoogleSession::State) ) );
-  sync->start( login->text() , passw->text() );
+
+  sync->start( 
+      login->text() , 
+      passw->text() ,
+      (bool) skip->checkState()
+  );
 }
 
 

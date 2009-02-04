@@ -18,11 +18,12 @@ GoogleSync::~GoogleSync()
 {
 }
 
-bool GoogleSync::start(const QString &login, const QString &passwd)
+bool GoogleSync::start(const QString &login, const QString &passwd, bool setskip)
 {
   if (inProgress)
     return false;
   inProgress = true;
+  skip = setskip;
   session->login(login, passwd);
 }
 
@@ -54,8 +55,8 @@ void GoogleSync::googleGroups(QHash<QString, QString> groups)
 
 void GoogleSync::googleContacts(QList<QContact> contacts)
 {
-  qDebug() << "Got contacts. Updating";
-  session->updateContacts(contacts);
+  qDebug() << "Got contacts. Updating" << skip;
+  session->updateContacts(contacts,skip);
   qDebug() << "Terminating";
   QApplication::instance()->exit(0);
 }
