@@ -45,7 +45,7 @@ pics.hint=pics
 INSTALLS+=pics
 
 pkg.desc=Google synchronization tool
-pkg.version=r22
+pkg.version=_svn_revision_replace_
 pkg.maintainer=Ilya Petrov <ilya.muromec@gmail.com>
 pkg.license=GPL
 pkg.domain=trusted
