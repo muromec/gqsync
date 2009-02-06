@@ -17,7 +17,8 @@ HEADERS += \
   googlesession.h \
   googlesync.h \
   googlecontact.h \
-  loginwindow.h
+  loginwindow.h \
+  gzip.h \
 
 SOURCES += \
   main.cpp \
@@ -25,7 +26,8 @@ SOURCES += \
   googlesession_parser.cpp \
   googlesync.cpp \
   googlecontact.cpp \
-  loginwindow.cpp
+  loginwindow.cpp \
+  gzip.cpp \
 
 
 QT += xml network gui

@@ -12,8 +12,9 @@
 #include <QDebug>
 
 #include "googlesession.h"
+#include "gzip.h"
 
-//#define USER_AGENT "GQSync/1.0 (gzip)"
+#define USER_AGENT_GZ "GQSync/1.0 (gzip)"
 #define USER_AGENT "GQSync/1.0"
 static QString stateNames[] = {
   "Invalid",
@@ -141,12 +142,12 @@ void GoogleSession::groupsResult(bool errorFlag)
 
     qDebug() << "Groups Response header:" << http->lastResponse().statusCode() << http->lastResponse().reasonPhrase();
     qDebug() << "Groups HTTP headers\n" << http->lastResponse().toString();
-    // FIXME: Need status code check here 
     QString resp;
     if (http->lastResponse().value("content-encoding")=="gzip")
     {
-      QByteArray respInflated = qUncompress(respData);
-      resp = QString::fromUtf8(respInflated.constData()); 
+      char *data = inf(respData.constData(), respData.size() );
+      resp = QString::fromUtf8(data);
+      free(data);
     }
     else
       resp = QString::fromUtf8(respData.constData()); 
@@ -160,8 +161,20 @@ void GoogleSession::groupsResult(bool errorFlag)
 
 void GoogleSession::contactsResult(bool errorFlag)
 {
-    QString resp = QString::fromUtf8(http->readAll().constData()); 
+    QByteArray respData = http->readAll();
     qDebug() << "Contacts Response header:" << http->lastResponse().statusCode() << http->lastResponse().reasonPhrase();
+    qDebug() << "Contacts HTTP headers\n" << http->lastResponse().toString(); 
+
+    QString resp;
+    if (http->lastResponse().value("content-encoding")=="gzip")
+    {
+      char *data = inf(respData.constData(), respData.size() );
+      resp = QString::fromUtf8(data);
+      free(data);
+    }
+    else
+      resp = QString::fromUtf8(respData.constData()); 
+
     QList<QContact> contacts;
     parseContacts(resp, contacts);
     setState(Authenticated);
@@ -180,7 +193,7 @@ void GoogleSession::fetchGroups()
   header.setValue("Authorization",   "GoogleLogin auth="+authKey);
   header.setValue("Host",            "www.google.com");
   header.setValue("Accept-Encoding", "gzip");
-  header.setValue("User-Agent",      USER_AGENT);
+  header.setValue("User-Agent",      USER_AGENT_GZ);
 
   http->setHost("www.google.com");
   groupsFetchId = http->request(header);
@@ -205,7 +218,7 @@ void GoogleSession::fetchContacts()
   header.setValue("Authorization",   "GoogleLogin auth="+authKey);
   header.setValue("Host",            "www.google.com");
   header.setValue("Accept-Encoding", "gzip");
-  header.setValue("User-Agent",      USER_AGENT);
+  header.setValue("User-Agent",      USER_AGENT_GZ);
 
   http->setHost("www.google.com");
   contactsFetchId = http->request(header);
