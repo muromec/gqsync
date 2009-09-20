@@ -5,6 +5,7 @@
 #include <QHttp>
 #include <QHttpResponseHeader>
 #include <QHttpRequestHeader>
+#include <QUrl>
 
 #include <QContactModel>
 #include <QCategoryManager>
@@ -16,6 +17,7 @@
 
 #define USER_AGENT_GZ "GQSync/1.0 (gzip)"
 #define USER_AGENT "GQSync/1.0"
+#define GQSYNC_SOURCE "community-GQSync-1"
 static QString stateNames[] = {
   "Invalid",
   "Authenticating",
@@ -65,16 +67,27 @@ void GoogleSession::login(const QString &login, const QString &passwd)
     connect(http, SIGNAL(requestFinished(int, bool)), SLOT(httpResult(int, bool)));
   }
   
-  QHttpRequestHeader header("POST", "https://www.google.com/accounts/ClientLogin");
+	QHttpRequestHeader header("POST", "https://www.google.com/accounts/ClientLogin");
   http->setHost("google.com");
   
-  header.setValue("Host", "google.com");
+	//header.setValue("Host", "google.com");
   header.setValue( "User-Agent", USER_AGENT);
   header.setContentType("application/x-www-form-urlencoded");
   
-  QString queryString = QString("Email=%1&Passwd=%2&accountType=GOOGLE&service=cp").arg(login).arg(passwd);
+	QUrl query;
+	query.addQueryItem("accountType", "HOSTED_OR_GOOGLE");
+	query.addQueryItem("service", "cp");
+	query.addQueryItem("source", GQSYNC_SOURCE);
+	query.addQueryItem("Email", login);
+	query.addQueryItem("Passwd", passwd);
+
+	qDebug() << "Auth request";
+	qDebug() << "--Header";
+	qDebug() << header.toString();
+	qDebug() << "--Body";
+	qDebug() << query.encodedQuery();
   
-  authReqId = http->request(header, queryString.toUtf8());
+	authReqId = http->request(header, query.encodedQuery());
   setState(Authenticating);    
 }
 
@@ -231,23 +244,36 @@ int GoogleSession::updateContacts(QList<QContact> &contacts, bool skip) {
   setState(UpdatingContacts);
   QContactModel filter;
 
+	qDebug() << "PIM source" << filter.defaultSource().identity;
+
   for (int i = 0; i < contacts.size(); ++i) {
-    QContact gContact = contacts.at(i);
+		QContact gContact = contacts.at(i);
+
+		qDebug() << "process contact" << gContact.label();
 
     // skip contacts with no phonenumbers
     if (skip && (! gContact.phoneNumbers().size() ))
       continue;
 
+    /*
+		filter.addContact(gContact, filter.phoneSource());
+		continue;
+    */
+
     filter.setFilter(gContact.label());
 
-    // single match. mering
+    // single match. merging
     if (filter.count() == 1) {
+			qDebug() << "Merging";
       filter.updateContact( merge(filter.contact(0), gContact) );
     } 
     // no match. saving directly
     else if (filter.count() == 0) {
+			qDebug() << "Adding";
       filter.addContact(gContact);
     }
+		else
+			qDebug() << "WTF?! Multiple matches";
   }
 
   setState(Authenticated);
