@@ -15,8 +15,8 @@
 #include "googlesession.h"
 #include "gzip.h"
 
-#define USER_AGENT_GZ "GQSync/1.0 (gzip)"
-#define USER_AGENT "GQSync/1.0"
+#define USER_AGENT_GZ "GQSync/1.1 (gzip)"
+#define USER_AGENT "GQSync/1.1"
 #define GQSYNC_SOURCE "community-GQSync-1"
 static QString stateNames[] = {
   "Invalid",
